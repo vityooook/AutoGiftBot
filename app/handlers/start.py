@@ -4,7 +4,7 @@ from aiogram.filters import Command
 from loguru import logger
 from aiogram.fsm.context import FSMContext
 
-from app.database.crud.user import get_or_create_user, get_user_balance, is_admin
+from app.database.crud.user import get_or_create_user, get_user_balance, is_admin, get_total_balance
 from app.keyboards.main_kb import get_main_menu
 
 router = Router()
@@ -34,10 +34,12 @@ async def cmd_start(message: Message, state: FSMContext) -> None:
         await state.clear()
         
         balance = await get_user_balance(message.from_user.id)
+        total_balance = await get_total_balance()
             
         await message.answer(
             f"Привет, {message.from_user.full_name}! 👋\n\n"
-            f"💰 Баланс: {balance} ⭐️\n\n"
+            f"💰 Ваш баланс: {balance} ⭐️\n"
+            f"💰 Общий баланс: {total_balance} ⭐️\n\n"
             "Я бот для автоматической покупки подарков в Telegram.",
             reply_markup=get_main_menu()
         )
@@ -65,10 +67,12 @@ async def back_to_main_menu(callback: CallbackQuery, state: FSMContext) -> None:
         await state.clear()
         
         balance = await get_user_balance(callback.from_user.id)
+        total_balance = await get_total_balance()
         
         await callback.message.edit_text(
             f"Главное меню:\n\n"
-            f"💰 Баланс: {balance} ⭐️",
+            f"💰 Ваш баланс: {balance} ⭐️\n"
+            f"💰 Общий баланс: {total_balance} ⭐️",
             reply_markup=get_main_menu()
         )
         logger.info(f"User {callback.from_user.id} returned to main menu")

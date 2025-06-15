@@ -238,3 +238,15 @@ async def process_refund(user_id: int, telegram_payment_charge_id: str) -> None:
     except Exception as e:
         logger.error(f"Error processing refund: {e}")
         raise
+
+@logger.catch()
+async def get_total_balance() -> int:
+    """Получить общий баланс всех пользователей
+
+    :return: Общий баланс всех пользователей
+    """
+    async with get_session() as session:
+        stmt = select(User.balance)
+        result = await session.execute(stmt)
+        balances = result.scalars().all()
+        return sum(balances) if balances else 0
