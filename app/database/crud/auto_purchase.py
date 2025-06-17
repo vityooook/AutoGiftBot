@@ -139,8 +139,6 @@ async def update_settings(
                     raise ValueError("Purchase cycles must be an integer")
                 if purchase_cycles <= 0:
                     raise ValueError("Purchase cycles must be positive")
-                if purchase_cycles > 100:
-                    raise ValueError("Purchase cycles too high")
                 update_data["purchase_cycles"] = purchase_cycles
 
             stmt = update(AutoPurchaseSettings).where(
