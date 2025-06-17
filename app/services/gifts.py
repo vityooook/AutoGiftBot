@@ -185,7 +185,7 @@ class GiftService:
     async def _send_gifts_to_user(self, user_id: int, gifts: List[Dict[str, Any]]) -> None:
         """Отправляет подарки пользователю через Telegram API"""
         for gift in gifts:
-            max_attempts = 60
+            max_attempts = 60 * 5
             attempt = 0
             
             while attempt < max_attempts:
