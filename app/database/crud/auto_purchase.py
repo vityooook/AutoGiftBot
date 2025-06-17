@@ -132,8 +132,6 @@ async def update_settings(
                     raise ValueError("Supply limit must be an integer")
                 if supply_limit < 0:
                     raise ValueError("Supply limit cannot be negative")
-                if supply_limit > 10000:
-                    raise ValueError("Supply limit too high")
                 update_data["supply_limit"] = supply_limit
                 
             if purchase_cycles is not None:

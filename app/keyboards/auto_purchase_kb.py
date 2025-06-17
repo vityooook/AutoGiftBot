@@ -39,7 +39,7 @@ def get_supply_limit_buttons() -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 def get_cycles_buttons() -> InlineKeyboardMarkup:
-    cycles = [1, 2, 3, 5, 10, 20, 30, 50, 75, 100]
+    cycles = [1, 2, 3, 5, 10, 20, 30, 50, 75, 100, 150, 200, 300]
     builder = InlineKeyboardBuilder()
     for cycle in cycles:
         builder.button(text=str(cycle), callback_data=AutoPurchaseSettingsCallback(number=cycle, type="cycles"))
