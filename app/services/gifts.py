@@ -184,15 +184,24 @@ class GiftService:
     @handle_errors("Отправка подарков")
     async def _send_gifts_to_user(self, user_id: int, gifts: List[Dict[str, Any]]) -> None:
         """Отправляет подарки пользователю через Telegram API"""
-        try:
-            for gift in gifts:
-                # Здесь будет вызов API для отправки подарка
-                await bot.send_gift(gift["id"], user_id, text=f"@vityooook love u")
-                logger.info(f"Отправлен подарок {gift['id']} пользователю {user_id} за {gift['price']} звезд")
-                
-        except Exception as e:
-            logger.error(f"Ошибка при отправке подарков пользователю {user_id}: {e}")
-            raise
+        for gift in gifts:
+            max_attempts = 60
+            attempt = 0
+            
+            while attempt < max_attempts:
+                try:
+                    await bot.send_gift(gift["id"], user_id, text=f"@vityooook love u")
+                    logger.info(f"Отправлен подарок {gift['id']} пользователю {user_id} за {gift['price']} звезд")
+                    break  # Успешная отправка, выходим из цикла
+                except Exception as e:
+                    attempt += 1
+                    if attempt == max_attempts:
+                        logger.error(f"Не удалось отправить подарк {gift['id']} пользователю {user_id} после {max_attempts} попыток: {e}")
+                        raise  # Если все попытки исчерпаны, пробрасываем ошибку дальше
+                    else:
+                        logger.warning(f"Попытка {attempt} отправки подарка {gift['id']} не удалась. Повторная попытка через 1 секунду")
+                        await asyncio.sleep(1)  # Пауза 1 секунда между попытками
+                        continue
 
     @handle_errors("Проверка и покупка подарков")
     async def check_and_purchase_gifts(self) -> None:
